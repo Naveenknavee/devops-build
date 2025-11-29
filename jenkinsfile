@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')    // Jenkins credentials ID
+        DEV_REPO = "naveenknavee/dev"
+        PROD_REPO = "naveenknavee/prod"
+        IMAGE_TAG = "latest"
+    }
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Naveenknavee/devops-build.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                  echo "Building Docker Image...by executing build.sh script"  
+                  sh """
+                    chmod +x build.sh
+                    ./build.sh
+                    """
+
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    echo "login to Docker Hub..."
+                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+                    echo "login successful."
+
+                    if (env.GIT_BRANCH == "origin/dev") {
+                        echo "Pushing to DEV repo..."
+                        sh """
+                            docker tag e-commerce naveenknavee/dev:latest
+                            docker push naveenknavee/dev:latest
+                        """
+                    } 
+                    else if (env.GIT_BRANCH == "origin/master") {
+                        echo "Pushing to PROD repo..."
+                        sh """
+                            docker tag e-commerce naveenknavee/prod:latest
+                            docker push naveenknavee/prod:latest
+                            
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            when {
+                branch 'master'  // Only deploy on master
+            }
+            steps {
+                script {
+                    echo "Deploying new image to production server..."
+                    // Example deployment command:
+                    sh """chmod +x deploy.sh
+                        ./deploy.sh"""
+                }
+            }
+        }
+    }
+}
