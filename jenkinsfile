@@ -16,7 +16,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                checkout scm
+                git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Naveenknavee/devops-build.git'
+            }
             }
         }
 
