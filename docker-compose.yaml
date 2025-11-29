@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  web:
+    image: e-commerce:latest
+    container_name: devops-app
+    ports:
+      - "3000:80"   # Host:Container
+    restart: always
