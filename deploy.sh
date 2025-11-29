@@ -1,3 +1,4 @@
 #! /bin/bash
 
-docker-compose up -d --build
+docker pull naveenknavee/prod:latest
+docker compose up -d

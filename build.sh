@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 
-IMAGENAME="e-commerce"
+IMAGENAME="naveenknavee/dev"
 TAG="latest"
 
 docker build -t ${IMAGENAME}:${TAG} .
