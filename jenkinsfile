@@ -16,8 +16,8 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                def branchName = env.GIT_BRANCH.replace('origin/', '')
-                git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Naveenknavee/devops-build.git'
+                checkout scm
+                #git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Naveenknavee/devops-build.git'
             }
         }
 
