@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')    // Jenkins credentials ID
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         DEV_REPO = "naveenknavee/dev"
         PROD_REPO = "naveenknavee/prod"
         IMAGE_TAG = "latest"
@@ -18,18 +18,16 @@ pipeline {
             steps {
                 git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Naveenknavee/devops-build.git'
             }
-            }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                  echo "Building Docker Image...by executing build.sh script"  
-                  sh """
-                    chmod +x build.sh
-                    ./build.sh
+                    echo "Building Docker Image...by executing build.sh script"
+                    sh """
+                        chmod +x build.sh
+                        ./build.sh
                     """
-
                 }
             }
         }
@@ -47,13 +45,11 @@ pipeline {
                             docker tag e-commerce naveenknavee/dev:latest
                             docker push naveenknavee/dev:latest
                         """
-                    } 
-                    else if (env.GIT_BRANCH == "origin/master") {
+                    } else if (env.GIT_BRANCH == "origin/master") {
                         echo "Pushing to PROD repo..."
                         sh """
                             docker tag e-commerce naveenknavee/prod:latest
                             docker push naveenknavee/prod:latest
-                            
                         """
                     }
                 }
@@ -62,16 +58,19 @@ pipeline {
 
         stage('Deploy Application') {
             when {
-                branch 'master'  // Only deploy on master
+                branch 'master'
             }
             steps {
                 script {
                     echo "Deploying new image to production server..."
-                    // Example deployment command:
-                    sh """chmod +x deploy.sh
-                        ./deploy.sh"""
+                    sh """
+                        chmod +x deploy.sh
+                        ./deploy.sh
+                    """
                 }
             }
         }
-    }
 
+    } // end stages
+
+} // end pipeline
