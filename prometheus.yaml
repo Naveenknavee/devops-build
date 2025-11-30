@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: "node"
+    static_configs:
+      - targets: ["      :9100"]  # --> pass the ip address of the server where node exporter is running 
+
+  - job_name: "blackbox"
+    metrics_path: /probe
+    params:
+      module: ["http_2xx"]
+    static_configs:
+      - targets:
+          - "http://YOUR_APP_IP_OR_DOMAIN" # --> pass the ip address or domain of the application to be monitored
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+      - source_labels: [__param_target]
+        target_label: instance
+

@@ -1,0 +1,14 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'naveenknavee11@gmail.com'
+  smtp_auth_username: 'naveenknavee11@gmail.com'
+  smtp_auth_password: 'YOUR_APP_PASSWORD' # --> use app password for gmail
+
+route:
+  receiver: 'email-alert'
+
+receivers:
+  - name: 'email-alert'
+    email_configs:
+      - to: 'naveenknavee11@gmail.com'
+        send_resolved: false
