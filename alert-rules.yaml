@@ -1,0 +1,11 @@
+groups:
+- name: app-down
+  rules:
+  - alert: ApplicationDown
+    expr: probe_success == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Application is DOWN"
+      description: "The monitored application {{ $labels.instance }} is unreachable."

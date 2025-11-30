@@ -1,0 +1,82 @@
+Install Node Exporter:
+
+sudo useradd -rs /bin/false node_exporter
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+tar xvf node_exporter-1.8.1.linux-amd64.tar.gz
+sudo mv node_exporter-1.8.1.linux-amd64/node_exporter /usr/local/bin/
+
+create service
+
+sudo tee /etc/systemd/system/node_exporter.service <<EOF
+
+[Unit]
+Description=Node Exporter
+
+[Service]
+User=node_exporter
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=default.target
+EOF
+
+Start service:
+sudo systemctl daemon-reload
+sudo systemctl start node_exporter
+sudo systemctl enable node_exporter
+
+Install Prometheus
+
+wget https://github.com/prometheus/prometheus/releases/download/v2.53.2/prometheus-2.53.2.linux-amd64.tar.gz
+tar -xvf prometheus-*.tar.gz
+sudo mv prometheus-*/prometheus /usr/local/bin/
+sudo mv prometheus-*/promtool /usr/local/bin/
+sudo mkdir /etc/prometheus
+sudo mv prometheus-*/{consoles,console_libraries,prometheus.yml} /etc/prometheus/
+
+Install Blackbox Exporter (to detect app UP/DOWN)
+
+wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
+tar -xvf blackbox_exporter*.tar.gz
+sudo mv blackbox_exporter*/blackbox_exporter /usr/local/bin/
+
+Blackbox config (/etc/blackbox.yml):
+
+blackbox.yaml
+modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+
+
+Configure Prometheus for Node + Blackbox
+
+   Edit /etc/prometheus/prometheus.yml:
+find the prometheus.yaml
+
+
+Create Alert Rule (only when app goes DOWN)
+
+  Create file: /etc/prometheus/alert_rules.yml
+find the aler-rules.yaml
+
+Add rules to Prometheus config:
+
+rule_files:
+  - "/etc/prometheus/alert_rules.yml"
+
+Restart Prometheus.
+
+Setup Alertmanager for Email Alerts
+
+  Alertmanager config: /etc/alertmanager/alertmanager.yml
+
+Start Alertmanager:
+
+./alertmanager --config.file=/etc/alertmanager/alertmanager.yml
+
+✔ Get email ONLY when the app goes DOWN
+✔ No spam (we turned off send_resolved)
+✔ Node Exporter gives server metrics
+✔ Blackbox checks HTTP status
+✔ Prometheus + Alertmanager handle notifications

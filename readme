@@ -1,0 +1,55 @@
+Clone the application from Giturl
+
+Dcoker:
+
+Write a dockerfile to conver as image--> check the dockerfile in structure
+write docker-compose.yaml to run as service using docker compose up and down
+
+BashScripting:
+
+build.sh--> build dockerimage
+deploy.sh-->deploy the application pull image from dockerhub repo
+
+Dockerhub:
+
+create repo for image storing 
+naveenknavee/dev--> public repo
+naveenknavee/prod-->private repo
+
+Jenkins:
+
+Allow port 22 and 8080 in SG
+
+lanuch EC2 serve t2.medium 
+install jdk 17,jenkins,docker....
+Add jenkins to sudo group ,add docker to jenkins group
+
+Restart jenkins and docker 
+
+Webhook: pass the pay load url ip address to webhook in git repo for auto trigger
+
+Credentials: pass the dockerhub username and pswd and mention the ID (important)
+Pass the id to jenkinsfile
+
+              Please find the step of all operation & logic in jenkins file 
+
+• If code pushed to dev branch, docker image must build and pushed to dev repo in docker hub
+• If dev merged to master, then docker image must be pushed to prod repo in docker hub
+
+Create a multibranch pipeline -->it scan for jenkins file if file found it trigger the pipeline and 
+execute the steps
+
+git merge --> dev to master --> jenkins file found it deploy the application to production server 
+
+Launch the t2.micro instance and configure SG
+
+allow port 22
+port 3000 for access the application install docker 
+please find the screnshort of all the rules
+
+Please find the monitoring.txt for full monitoring setup 
+
+Monitoring:
+Setup a monitoring system to check the health status of the application. (Open-source)
+Sending notifications only if the application goes down is highly appreciable
+
